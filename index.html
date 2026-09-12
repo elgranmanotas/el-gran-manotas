@@ -97,7 +97,7 @@
   }
   #cat-nav{
     position:sticky;
-    top:76px;
+    top:var(--header-h, 76px);
     z-index:40;
     background:var(--crema);
     border-bottom:1px solid var(--borde);
@@ -690,7 +690,7 @@ function renderCatNav(categorias){
     btn.addEventListener('click', () => {
       const target = document.getElementById('cat-' + slugCat(cat));
       if(target){
-        const offset = 145; // header + barra de categorías
+        const offset = document.querySelector('header').offsetHeight + document.getElementById('cat-nav').offsetHeight + 10;
         const y = target.getBoundingClientRect().top + window.scrollY - offset;
         window.scrollTo({top: y, behavior: 'smooth'});
       }
@@ -704,7 +704,8 @@ function marcarCategoriaActiva(){
   let actual = null;
   secciones.forEach(sec => {
     const rect = sec.getBoundingClientRect();
-    if(rect.top <= 160){ actual = sec.id; }
+    const umbral = document.querySelector('header').offsetHeight + document.getElementById('cat-nav').offsetHeight + 15;
+    if(rect.top <= umbral){ actual = sec.id; }
   });
   document.querySelectorAll('.cat-nav-btn').forEach(btn => {
     btn.classList.toggle('activo', ('cat-' + btn.dataset.target) === actual);
@@ -938,9 +939,21 @@ waBtn.addEventListener('click', () => {
   window.open(`https://wa.me/573213428152?text=${mensaje}`, '_blank');
 });
 
+function ajustarAlturaHeader(){
+  const header = document.querySelector('header');
+  document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+}
+window.addEventListener('resize', ajustarAlturaHeader);
+window.addEventListener('load', ajustarAlturaHeader);
+if(document.fonts && document.fonts.ready){
+  document.fonts.ready.then(ajustarAlturaHeader);
+}
+ajustarAlturaHeader();
+
 renderCatalogo();
 renderCarrito();
 marcarCategoriaActiva();
+ajustarAlturaHeader();
 
 // Buscador
 document.getElementById('buscador').addEventListener('input', (e) => {
