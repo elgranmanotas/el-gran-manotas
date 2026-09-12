@@ -95,6 +95,62 @@
     justify-content:center;
     font-weight:700;
   }
+  #cat-nav{
+    position:sticky;
+    top:76px;
+    z-index:40;
+    background:var(--crema);
+    border-bottom:1px solid var(--borde);
+    display:flex;
+    gap:8px;
+    padding:10px 20px;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+  #cat-nav::-webkit-scrollbar{ display:none; }
+  .cat-nav-btn{
+    flex:0 0 auto;
+    background:#fff;
+    border:1.5px solid var(--borde);
+    color:var(--carbon);
+    padding:8px 16px;
+    border-radius:20px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .cat-nav-btn:hover{ border-color:var(--rojo); }
+  .cat-nav-btn.activo{
+    background:var(--rojo);
+    border-color:var(--rojo);
+    color:#fff;
+  }
+  .hero .ayuda-rapida{
+    background:rgba(244,236,221,0.12);
+    border:1px solid rgba(244,236,221,0.3);
+    border-radius:6px;
+    padding:10px 14px;
+    font-size:13px;
+    color:#F0E4CE;
+    max-width:520px;
+    margin-bottom:14px;
+  }
+  .buscador-wrap{
+    max-width:1080px;
+    margin:20px auto 0;
+    padding:0 24px;
+  }
+  #buscador{
+    width:100%;
+    padding:12px 16px;
+    border:1.5px solid var(--borde);
+    border-radius:8px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+    background:#fff;
+  }
+  #buscador:focus{ outline:none; border-color:var(--rojo); }
   .hero{
     background:var(--rojo-osc);
     color:var(--crema);
@@ -195,14 +251,47 @@
   .cantidad-row{
     display:flex;
     gap:6px;
+    align-items:center;
   }
+  .paso-btn{
+    width:30px;
+    height:32px;
+    flex:0 0 auto;
+    border:1px solid var(--borde);
+    background:#fff;
+    border-radius:4px;
+    font-size:16px;
+    cursor:pointer;
+    color:var(--rojo);
+    font-weight:700;
+    line-height:1;
+  }
+  .paso-btn:hover{ background:var(--crema-2); }
+  .atajos-row{
+    display:flex;
+    gap:6px;
+  }
+  .atajo-btn{
+    flex:1;
+    background:var(--crema-2);
+    border:1px solid var(--borde);
+    color:var(--carbon);
+    padding:5px 6px;
+    border-radius:4px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+  .atajo-btn:hover{ background:var(--mostaza); color:#fff; border-color:var(--mostaza); }
   .cant-input{
-    width:70px;
-    padding:7px 8px;
+    width:44px;
+    padding:6px 4px;
     border:1px solid var(--borde);
     border-radius:4px;
     font-size:13px;
     font-family:'Inter',sans-serif;
+    text-align:center;
   }
   .unidad-select{
     flex:1;
@@ -402,6 +491,38 @@
     .nosotros-inner{ grid-template-columns:1fr; }
     .nosotros-img{ order:-1; }
   }
+  #float-cart-btn{
+    position:fixed;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#25D366;
+    color:#fff;
+    border:none;
+    padding:13px 22px;
+    border-radius:30px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.25);
+    cursor:pointer;
+    z-index:80;
+    display:none;
+    align-items:center;
+    gap:8px;
+  }
+  #float-cart-btn.visible{ display:flex; }
+  #float-cart-count{
+    background:rgba(255,255,255,0.3);
+    border-radius:50%;
+    width:20px;
+    height:20px;
+    font-size:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+  }
   footer{
     background:var(--carbon);
     color:#C9BEB0;
@@ -428,13 +549,20 @@
   </button>
 </header>
 
+<nav id="cat-nav"></nav>
+
 <section class="hero">
   <div class="hero-inner">
     <h1>Carne fresca, cortada al momento</h1>
     <p>Selecciona lo que necesitas y arma tu pedido. Nosotros te confirmamos precio y disponibilidad por WhatsApp.</p>
+    <div class="ayuda-rapida">💡 Escoge la cantidad en kg o gramos, dale "Agregar", y al final envía tu pedido por WhatsApp.</div>
     <div class="ubicacion">📍 Local 214, La Nueva Sexta</div>
   </div>
 </section>
+
+<div class="buscador-wrap">
+  <input type="text" id="buscador" placeholder="🔍 Busca un producto (ej. chorizo, costilla...)">
+</div>
 
 <main id="catalogo"></main>
 
@@ -455,6 +583,10 @@
   <div>El Gran Manotas · Local 214, La Nueva Sexta</div>
   <div style="margin-top:6px;">Pedidos por <a href="https://wa.me/573213428152" target="_blank" rel="noopener">WhatsApp: +57 321 342 8152</a></div>
 </footer>
+
+<button id="float-cart-btn" aria-label="Abrir carrito y pedir por WhatsApp">
+  🛒 Pedir por WhatsApp <span id="float-cart-count">0</span>
+</button>
 
 <div id="overlay"></div>
 <div id="cart-drawer">
@@ -543,13 +675,52 @@ const iconoCat = {
   'Cortes de carne':'🥩', 'Cerdo':'🐖', 'Pollo':'🐔', 'Asadura':'🫘', 'Embutidos':'🌭'
 };
 
+function slugCat(cat){
+  return cat.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-');
+}
+
+function renderCatNav(categorias){
+  const nav = document.getElementById('cat-nav');
+  nav.innerHTML = '';
+  categorias.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-nav-btn';
+    btn.textContent = (iconoCat[cat] || '') + ' ' + cat;
+    btn.dataset.target = slugCat(cat);
+    btn.addEventListener('click', () => {
+      const target = document.getElementById('cat-' + slugCat(cat));
+      if(target){
+        const offset = 145; // header + barra de categorías
+        const y = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({top: y, behavior: 'smooth'});
+      }
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function marcarCategoriaActiva(){
+  const secciones = document.querySelectorAll('.categoria');
+  let actual = null;
+  secciones.forEach(sec => {
+    const rect = sec.getBoundingClientRect();
+    if(rect.top <= 160){ actual = sec.id; }
+  });
+  document.querySelectorAll('.cat-nav-btn').forEach(btn => {
+    btn.classList.toggle('activo', ('cat-' + btn.dataset.target) === actual);
+  });
+}
+window.addEventListener('scroll', marcarCategoriaActiva);
+
 function renderCatalogo(){
   catalogo.innerHTML = '';
   const productos = todosLosProductos();
   const categorias = [...new Set(productos.map(p => p.cat))];
+  renderCatNav(categorias);
   categorias.forEach(cat => {
     const wrap = document.createElement('div');
     wrap.className = 'categoria';
+    wrap.id = 'cat-' + slugCat(cat);
     const h2 = document.createElement('h2');
     h2.textContent = cat;
     wrap.appendChild(h2);
@@ -563,18 +734,45 @@ function renderCatalogo(){
         <div class="card-body">
           <h3>${p.nombre}</h3>
           <div class="cantidad-row">
+            <button type="button" class="paso-btn menos" aria-label="Restar cantidad">−</button>
             <input type="number" class="cant-input" min="0.1" step="0.1" value="1" aria-label="Cantidad de ${p.nombre}">
+            <button type="button" class="paso-btn mas" aria-label="Sumar cantidad">+</button>
             <select class="unidad-select" aria-label="Unidad para ${p.nombre}">
               <option value="kg">kg</option>
               <option value="g">g</option>
             </select>
           </div>
-          <button class="add-btn" data-id="${p.id}" data-nombre="${p.nombre}">Agregar al carrito</button>
+          <div class="atajos-row">
+            <button type="button" class="atajo-btn" data-cant="0.5" data-unidad="kg">½ kg</button>
+            <button type="button" class="atajo-btn" data-cant="1" data-unidad="kg">1 kg</button>
+          </div>
+          <button class="add-btn" data-id="${p.id}" data-nombre="${p.nombre}">Agregar</button>
         </div>`;
       grid.appendChild(card);
     });
     wrap.appendChild(grid);
     catalogo.appendChild(wrap);
+  });
+
+  catalogo.querySelectorAll('.paso-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.card-body');
+      const cantInput = card.querySelector('.cant-input');
+      const unidad = card.querySelector('.unidad-select').value;
+      const paso = unidad === 'kg' ? 0.5 : 50;
+      let valor = parseFloat(cantInput.value) || 0;
+      valor = btn.classList.contains('mas') ? valor + paso : valor - paso;
+      if(valor < (unidad === 'kg' ? 0.1 : 1)) valor = unidad === 'kg' ? 0.1 : 1;
+      cantInput.value = Math.round(valor * 100) / 100;
+    });
+  });
+
+  catalogo.querySelectorAll('.atajo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.card-body');
+      card.querySelector('.cant-input').value = btn.dataset.cant;
+      card.querySelector('.unidad-select').value = btn.dataset.unidad;
+    });
   });
 
   catalogo.querySelectorAll('.add-btn').forEach(btn => {
@@ -592,7 +790,7 @@ function renderCatalogo(){
       agregarAlCarrito(btn.dataset.id, btn.dataset.nombre, cantidad, unidad);
       btn.textContent = 'Agregado ✓';
       btn.classList.add('added');
-      setTimeout(() => { btn.textContent = 'Agregar al carrito'; btn.classList.remove('added'); }, 900);
+      setTimeout(() => { btn.textContent = 'Agregar'; btn.classList.remove('added'); }, 900);
     });
   });
 }
@@ -627,6 +825,9 @@ const waBtn = document.getElementById('wa-btn');
 function renderCarrito(){
   const ids = Object.keys(carrito);
   cartCountEl.textContent = ids.length;
+  const floatBtn = document.getElementById('float-cart-btn');
+  document.getElementById('float-cart-count').textContent = ids.length;
+  floatBtn.classList.toggle('visible', ids.length > 0);
   cartItemsEl.innerHTML = '';
   if(ids.length === 0){
     cartItemsEl.innerHTML = '<p class="cart-empty">Tu carrito está vacío.</p>';
@@ -665,6 +866,9 @@ function renderCarrito(){
 const overlay = document.getElementById('overlay');
 const drawer = document.getElementById('cart-drawer');
 document.getElementById('cart-btn').addEventListener('click', () => {
+  overlay.classList.add('open'); drawer.classList.add('open');
+});
+document.getElementById('float-cart-btn').addEventListener('click', () => {
   overlay.classList.add('open'); drawer.classList.add('open');
 });
 function cerrarCarrito(){ overlay.classList.remove('open'); drawer.classList.remove('open'); }
@@ -736,6 +940,22 @@ waBtn.addEventListener('click', () => {
 
 renderCatalogo();
 renderCarrito();
+marcarCategoriaActiva();
+
+// Buscador
+document.getElementById('buscador').addEventListener('input', (e) => {
+  const termino = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.categoria').forEach(sec => {
+    let algunoVisible = false;
+    sec.querySelectorAll('.card').forEach(card => {
+      const nombre = card.querySelector('h3').textContent.toLowerCase();
+      const coincide = nombre.includes(termino);
+      card.style.display = coincide ? '' : 'none';
+      if(coincide) algunoVisible = true;
+    });
+    sec.style.display = (termino === '' || algunoVisible) ? '' : 'none';
+  });
+});
 </script>
 </body>
 </html>
