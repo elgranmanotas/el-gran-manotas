@@ -680,6 +680,13 @@ const catalogo = document.getElementById('catalogo');
 const iconoCat = {
   'Cortes de carne':'🥩', 'Cerdo':'🐖', 'Pollo':'🐔', 'Asadura':'🫘', 'Embutidos':'🌭'
 };
+const fotoCat = {
+  'Cortes de carne':'https://images.pexels.com/photos/8477071/pexels-photo-8477071.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'Pollo':'https://commons.wikimedia.org/wiki/Special:FilePath/Fresh_chicken_meat.jpg?width=800',
+  'Cerdo':'https://commons.wikimedia.org/wiki/Special:FilePath/Granville_Island_Market_-_cuts_of_pork.jpg?width=800',
+  'Asadura':'https://commons.wikimedia.org/wiki/Special:FilePath/Raw_liver.jpg?width=800',
+  'Embutidos':'https://commons.wikimedia.org/wiki/Special:FilePath/Morcillas_y_chorizos-10.jpg?width=800'
+};
 
 function slugCat(cat){
   return cat.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-');
@@ -737,7 +744,7 @@ function renderCatalogo(){
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
-        <div class="card-img">${p.img ? `<img src="${p.img}" alt="${p.nombre}">` : (iconoCat[cat] || '🍖')}</div>
+        <div class="card-img" data-icono="${iconoCat[cat] || '🍖'}">${(p.img || fotoCat[cat]) ? `<img src="${p.img || fotoCat[cat]}" alt="${p.nombre}" onerror="this.closest('.card-img').innerHTML=this.closest('.card-img').dataset.icono;">` : (iconoCat[cat] || '🍖')}</div>
         <div class="card-body">
           <h3>${p.nombre}</h3>
           <div class="cantidad-row">
